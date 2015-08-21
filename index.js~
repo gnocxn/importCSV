@@ -1,0 +1,22 @@
+var fs = require('fs'),
+    csv = require('fast-csv'),
+    _ = require('underscore');
+//var stream = fs.createReadStream("/D/Projects/pornhub-csv/pornhub.com-db.part.00.00.csv");
+var path = '/D/Projects/pornhub-csv/pornhub.com-db.part.00.00.csv';
+
+    csv
+    .fromPath(path, {delimiter : '|', headers : ["iframe", "thumbnail", "images", "title", "tags", "categories", "none", "duration"]})
+    .transform(function(data){
+         var tags = data.tags.split(';'),
+            images = data.images.split(';'),
+            categories = data.categories.split(';');
+        return _.extend(_.omit(data, 'none'),{images : images,tags : tags, categories : categories});
+     })
+    .on("data", function(data){
+         console.log(data);
+    })
+    .on("end", function(){
+         console.log("done");
+    });
+
+//stream.pipe(csvStream);
